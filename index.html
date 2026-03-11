@@ -3,466 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen">
-    <title>Teleprompter Pro</title>
+    <title>Teleprompter Mobile Pro</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Rajdhani:wght@500;700&display=swap');
-
         :root {
-            --bg: #000;
-            --surface: #111;
-            --border: #2a2a2a;
-            --accent: #00ff88;
-            --accent2: #ff3860;
-            --text: #f0f0f0;
-            --muted: #555;
+            --bg-color: #000000;
+            --panel-bg: #1a1a1a;
+            --accent: #007bff;
+            --text-color: #ffffff;
         }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body, html {
-            margin: 0; padding: 0;
-            height: 100%; width: 100%;
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             overflow: hidden;
             touch-action: manipulation;
-            -webkit-user-select: none;
-            user-select: none;
         }
 
-        /* ── EDITOR ── */
-        #editor {
+        /* TELA DE CONFIGURAÇÃO */
+        #editor-container {
             display: flex;
             flex-direction: column;
             height: 100%;
-            padding: 20px 16px;
+            padding: 15px;
+            box-sizing: border-box;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
-        .logo {
-            text-align: center;
-            margin-bottom: 16px;
-        }
-        .logo span {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 4px;
-            color: var(--accent);
-            text-transform: uppercase;
-        }
-        .logo h1 {
-            margin: 4px 0 0;
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-        }
+        h2 { text-align: center; margin: 10px 0; font-size: 1.5rem; }
 
         textarea {
-            width: 100%;
-            min-height: 180px;
-            background: var(--surface);
-            color: var(--text);
-            border: 1px solid var(--border);
-            padding: 14px;
+            flex-grow: 1;
+            min-height: 200px;
+            background: #222;
+            color: white;
+            border: 1px solid #444;
+            padding: 15px;
             font-size: 16px;
-            font-family: 'Rajdhani', sans-serif;
-            border-radius: 12px;
+            border-radius: 10px;
             resize: none;
-            margin-bottom: 16px;
-            -webkit-user-select: text;
-            user-select: text;
+            margin-bottom: 15px;
         }
-        textarea:focus { outline: none; border-color: var(--accent); }
 
-        .grid {
+        .controls-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 15px;
+            background: var(--panel-bg);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
         }
 
-        .ctrl {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        
+        label { font-size: 0.8rem; text-transform: uppercase; color: #888; }
 
-        .ctrl label {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.6rem;
-            letter-spacing: 2px;
-            color: var(--muted);
-            text-transform: uppercase;
-        }
-
-        .ctrl .val {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
+        select, input[type="range"] {
             width: 100%;
-            height: 4px;
-            background: var(--border);
-            border-radius: 2px;
-            outline: none;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px; height: 20px;
-            border-radius: 50%;
-            background: var(--accent);
-            cursor: pointer;
+            height: 40px;
         }
 
-        select {
-            background: var(--bg);
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px;
-            font-size: 0.9rem;
-            width: 100%;
-        }
-
-        .btn-start {
-            width: 100%;
-            padding: 18px;
-            background: var(--accent);
-            color: #000;
+        .btn-main {
+            background: #28a745;
+            color: white;
             border: none;
-            border-radius: 12px;
-            font-family: 'Space Mono', monospace;
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 3px;
+            padding: 18px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
             cursor: pointer;
-            margin-bottom: 24px;
-            transition: opacity 0.15s;
+            width: 100%;
+            margin-bottom: 20px;
         }
-        .btn-start:active { opacity: 0.7; }
 
-        /* ── PROMPTER ── */
-        #prompter {
+        /* TELA DO PROMPTER */
+        #prompter-view {
             display: none;
             position: fixed;
-            inset: 0;
-            background: #000;
-            z-index: 999;
-            /* iOS Safari: usar transform para scroll suave em vez de scrollTop */
-            overflow: hidden;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: black;
+            z-index: 1000;
+            overflow-y: scroll;
+            scrollbar-width: none;
         }
+        #prompter-view::-webkit-scrollbar { display: none; }
 
-        #prompter-inner {
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            will-change: transform;
-            padding: 50vh 5% 50vh;
-            word-wrap: break-word;
+        #prompter-content {
+            padding: 50vh 20px; /* Margem para o texto começar no meio */
             white-space: pre-wrap;
+            word-wrap: break-word;
+            transition: transform 0.1s linear;
         }
 
-        #prompter-text {
-            line-height: 1.5;
-        }
+        /* Classes de Espelhamento */
+        .mirror-h { transform: scaleX(-1); }
+        .mirror-v { transform: scaleY(-1); }
+        .mirror-both { transform: scale(-1, -1); }
 
-        /* Espelhamento */
-        #prompter.mirror-h  #prompter-inner { transform-origin: center; -webkit-transform: scaleX(-1); transform: scaleX(-1); }
-        #prompter.mirror-v  #prompter-inner { -webkit-transform: scaleY(-1); transform: scaleY(-1); }
-        #prompter.mirror-both #prompter-inner { -webkit-transform: scale(-1,-1); transform: scale(-1,-1); }
-
-        /* Linha guia */
-        .guide-line {
+        /* Interface de Controle no Celular (Overlay) */
+        #mobile-menu {
             position: fixed;
-            top: 50%;
-            left: 0; right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(0,255,136,0.5), transparent);
-            pointer-events: none;
-            z-index: 1001;
-        }
-
-        /* Overlay de controles */
-        #controls-overlay {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            padding: 16px 16px 32px;
-            z-index: 1002;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            flex-direction: column;
             gap: 10px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            opacity: 0.15;
-            transition: opacity 0.4s;
+            z-index: 2000;
+            opacity: 0.4;
+            transition: opacity 0.3s;
         }
-        #controls-overlay.visible { opacity: 1; }
+        #mobile-menu:hover, #mobile-menu:active { opacity: 1; }
 
-        .btn-row {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        .btn-c {
-            width: 56px; height: 56px;
-            border-radius: 50%;
-            border: 1.5px solid rgba(255,255,255,0.25);
-            background: rgba(20,20,20,0.85);
+        .btn-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            border: none;
+            background: rgba(255,255,255,0.2);
             color: white;
-            font-size: 18px;
+            font-size: 20px;
+            backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            transition: transform 0.1s;
         }
-        .btn-c:active { transform: scale(0.9); }
-        .btn-c.play { border-color: var(--accent); background: rgba(0,255,136,0.15); }
-        .btn-c.stop { border-color: var(--accent2); background: rgba(255,56,96,0.15); }
 
-        .speed-display {
-            text-align: center;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            color: rgba(255,255,255,0.5);
+        .indicator {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 0, 0, 0.4);
+            pointer-events: none;
+            z-index: 1500;
         }
     </style>
 </head>
 <body>
 
-<!-- ── EDITOR ── -->
-<div id="editor">
-    <div class="logo">
-        <span>Israel Pimentel</span>
-        <h1>TELEPROMPTER</h1>
+    <!-- INTERFACE DO EDITOR -->
+    <div id="editor-container">
+        <h2>Teleprompter BR</h2>
+        <textarea id="script-input" placeholder="Digite ou cole seu texto aqui..."></textarea>
+        
+        <div class="controls-grid">
+            <div class="control-group">
+                <label>Velocidade</label>
+                <input type="range" id="speed-input" min="0" max="15" step="0.5" value="3">
+            </div>
+            <div class="control-group">
+                <label>Fonte</label>
+                <input type="range" id="font-size-input" min="16" max="100" value="40">
+            </div>
+            <div class="control-group">
+                <label>Espelhamento</label>
+                <select id="mirror-select">
+                    <option value="none">Normal</option>
+                    <option value="horizontal">Horizontal (Espelho)</option>
+                    <option value="vertical">Vertical (Inverter)</option>
+                    <option value="both">Ambos</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Margens</label>
+                <input type="range" id="margin-input" min="5" max="25" value="10">
+            </div>
+        </div>
+        
+        <button class="btn-main" onclick="startPrompter()">INICIAR</button>
     </div>
 
-    <textarea id="txt" placeholder="Cole seu roteiro aqui..."></textarea>
-
-    <div class="grid">
-        <div class="ctrl">
-            <label>Velocidade</label>
-            <div class="val" id="speed-val">3</div>
-            <input type="range" id="speed" min="0" max="20" step="0.5" value="3"
-                oninput="document.getElementById('speed-val').textContent=parseFloat(this.value).toFixed(1)">
-        </div>
-        <div class="ctrl">
-            <label>Fonte (px)</label>
-            <div class="val" id="font-val">40</div>
-            <input type="range" id="font-sz" min="16" max="100" value="40"
-                oninput="document.getElementById('font-val').textContent=this.value">
-        </div>
-        <div class="ctrl">
-            <label>Espelhamento</label>
-            <select id="mirror">
-                <option value="none">Normal</option>
-                <option value="mirror-h">Horizontal</option>
-                <option value="mirror-v">Vertical</option>
-                <option value="mirror-both">Ambos</option>
-            </select>
-        </div>
-        <div class="ctrl">
-            <label>Margem (%)</label>
-            <div class="val" id="margin-val">8</div>
-            <input type="range" id="margin" min="2" max="25" value="8"
-                oninput="document.getElementById('margin-val').textContent=this.value">
-        </div>
-    </div>
-
-    <div class="ctrl" style="margin-bottom:16px">
-        <label>Cor do texto</label>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;padding-top:4px">
-            <div class="color-btn" data-color="#ffffff" style="background:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid #555"></div>
-            <div class="color-btn" data-color="#00ff88" style="background:#00ff88;width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid #555"></div>
-            <div class="color-btn" data-color="#ffdd57" style="background:#ffdd57;width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid #555"></div>
-            <div class="color-btn" data-color="#ff7043" style="background:#ff7043;width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid #555"></div>
-            <div class="color-btn" data-color="#e0e0e0" style="background:#e0e0e0;width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid #555"></div>
+    <!-- INTERFACE DO PROMPTER -->
+    <div id="prompter-view">
+        <div id="prompter-content"></div>
+        <div class="indicator"></div>
+        
+        <!-- Controles Flutuantes -->
+        <div id="mobile-menu">
+            <button class="btn-circle" onclick="changeSpeed(-1)">-</button>
+            <button class="btn-circle" onclick="togglePlay()" id="play-btn">▶</button>
+            <button class="btn-circle" onclick="changeSpeed(1)">+</button>
+            <button class="btn-circle" onclick="stopPrompter()" style="background:rgba(255,0,0,0.3)">✕</button>
         </div>
     </div>
 
-    <button class="btn-start" onclick="startPrompter()">▶ INICIAR</button>
-</div>
+    <script>
+        let scrolling = false;
+        let animationFrame;
+        const view = document.getElementById('prompter-view');
+        const content = document.getElementById('prompter-content');
+        const speedInput = document.getElementById('speed-input');
+        const playBtn = document.getElementById('play-btn');
 
-<!-- ── PROMPTER ── -->
-<div id="prompter">
-    <div id="prompter-inner">
-        <div id="prompter-text"></div>
-    </div>
-    <div class="guide-line"></div>
+        // Impede que a tela do celular apague (Wake Lock API)
+        let wakeLock = null;
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                }
+            } catch (err) { console.log(err.name, err.message); }
+        }
 
-    <div id="controls-overlay" id="overlay">
-        <div class="speed-display" id="speed-label">VEL: 3.0</div>
-        <div class="btn-row">
-            <button class="btn-c" onclick="changeSpeed(-1)">−</button>
-            <button class="btn-c play" id="play-btn" onclick="togglePlay()">▶</button>
-            <button class="btn-c" onclick="changeSpeed(1)">+</button>
-            <button class="btn-c stop" onclick="stopPrompter()">✕</button>
-        </div>
-    </div>
-</div>
+        function startPrompter() {
+            const text = document.getElementById('script-input').value || "Adicione um texto primeiro...";
+            content.innerText = text;
+            
+            // Aplicar Estilos
+            content.style.fontSize = document.getElementById('font-size-input').value + 'px';
+            content.style.paddingLeft = document.getElementById('margin-input').value + '%';
+            content.style.paddingRight = document.getElementById('margin-input').value + '%';
+            
+            // Aplicar Espelhamento
+            content.classList.remove('mirror-h', 'mirror-v', 'mirror-both');
+            const mode = document.getElementById('mirror-select').value;
+            if (mode === 'horizontal') content.classList.add('mirror-h');
+            else if (mode === 'vertical') content.classList.add('mirror-v');
+            else if (mode === 'both') content.classList.add('mirror-both');
 
-<script>
-    // ── Estado ──
-    let playing = false;
-    let raf;
-    let currentY = 0;          // posição atual em px (negativo = scroll para baixo)
-    let totalScrollable = 0;
-    let textColor = '#ffffff';
+            // Entrar em tela cheia se possível
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            }
 
-    const prompter     = document.getElementById('prompter');
-    const inner        = document.getElementById('prompter-inner');
-    const ptxt         = document.getElementById('prompter-text');
-    const speedInput   = document.getElementById('speed');
-    const playBtn      = document.getElementById('play-btn');
-    const overlay      = document.getElementById('controls-overlay');
-    const speedLabel   = document.getElementById('speed-label');
+            // Mudar tela
+            document.getElementById('editor-container').style.display = 'none';
+            view.style.display = 'block';
+            view.scrollTop = 0;
+            scrolling = false;
+            playBtn.innerText = "▶";
+            
+            requestWakeLock();
+        }
 
-    // Cor do texto
-    document.querySelectorAll('.color-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            textColor = btn.dataset.color;
-            document.querySelectorAll('.color-btn').forEach(b => b.style.border = '2px solid #555');
-            btn.style.border = '2px solid #fff';
+        function stopPrompter() {
+            scrolling = false;
+            cancelAnimationFrame(animationFrame);
+            if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+            view.style.display = 'none';
+            document.getElementById('editor-container').style.display = 'flex';
+            if (wakeLock) wakeLock.release();
+        }
+
+        function togglePlay() {
+            scrolling = !scrolling;
+            playBtn.innerText = scrolling ? "⏸" : "▶";
+            if (scrolling) autoScroll();
+        }
+
+        function autoScroll() {
+            if (!scrolling) return;
+            const speed = parseFloat(speedInput.value);
+            view.scrollTop += speed / 5; // Ajuste fino para suavidade no mobile
+            animationFrame = requestAnimationFrame(autoScroll);
+        }
+
+        function changeSpeed(delta) {
+            let newVal = parseFloat(speedInput.value) + delta;
+            if (newVal < 0) newVal = 0;
+            if (newVal > 15) newVal = 15;
+            speedInput.value = newVal;
+        }
+
+        // Toque na tela do prompter também inicia/pausa
+        view.addEventListener('click', (e) => {
+            if (e.target.tagName !== 'BUTTON') {
+                togglePlay();
+            }
         });
-    });
 
-    function getSpeed() { return parseFloat(speedInput.value); }
-
-    function startPrompter() {
-        const text = document.getElementById('txt').value.trim() || 'Adicione um texto primeiro...';
-        ptxt.textContent = text;
-
-        const fontSize = document.getElementById('font-sz').value;
-        const margin   = document.getElementById('margin').value;
-
-        ptxt.style.fontSize  = fontSize + 'px';
-        ptxt.style.color     = textColor;
-        ptxt.style.fontFamily = "'Rajdhani', sans-serif";
-        ptxt.style.fontWeight = '600';
-        inner.style.paddingLeft  = margin + '%';
-        inner.style.paddingRight = margin + '%';
-
-        // Espelhamento — aplicar na div #prompter (wrapper) via classe
-        prompter.className = '';
-        const mirrorVal = document.getElementById('mirror').value;
-        if (mirrorVal !== 'none') prompter.classList.add(mirrorVal);
-
-        // Reset posição
-        currentY = 0;
-        inner.style.transform = 'translateY(0)';
-
-        document.getElementById('editor').style.display = 'none';
-        prompter.style.display = 'block';
-
-        // Calcular altura total scrollável após render
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                totalScrollable = inner.scrollHeight - window.innerHeight;
-            });
+        // Atalhos de teclado (para quando usar com teclado bluetooth no celular)
+        window.addEventListener('keydown', (e) => {
+            if (view.style.display === 'block') {
+                if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+                if (e.code === 'Escape') stopPrompter();
+                if (e.code === 'ArrowUp') changeSpeed(0.5);
+                if (e.code === 'ArrowDown') changeSpeed(-0.5);
+            }
         });
-
-        playing = false;
-        playBtn.textContent = '▶';
-
-        showOverlay();
-    }
-
-    function stopPrompter() {
-        playing = false;
-        cancelAnimationFrame(raf);
-        prompter.style.display = 'none';
-        document.getElementById('editor').style.display = 'flex';
-    }
-
-    function togglePlay() {
-        playing = !playing;
-        playBtn.textContent = playing ? '⏸' : '▶';
-        if (playing) loop();
-        showOverlay();
-    }
-
-    function loop() {
-        if (!playing) return;
-        const spd = getSpeed();
-        // iOS Safari: usar transform translateY — muito mais suave que scrollTop
-        currentY -= spd * 0.4;
-        // Parar no fim
-        if (-currentY >= totalScrollable && totalScrollable > 0) {
-            currentY = -totalScrollable;
-            playing = false;
-            playBtn.textContent = '▶';
-            inner.style.transform = `translateY(${currentY}px)`;
-            return;
-        }
-        inner.style.transform = `translateY(${currentY}px)`;
-        raf = requestAnimationFrame(loop);
-    }
-
-    function changeSpeed(delta) {
-        let v = getSpeed() + delta;
-        v = Math.max(0, Math.min(20, v));
-        speedInput.value = v;
-        document.getElementById('speed-val').textContent = v.toFixed(1);
-        speedLabel.textContent = 'VEL: ' + v.toFixed(1);
-        showOverlay();
-    }
-
-    // Overlay: toque fora dos botões = play/pause
-    prompter.addEventListener('click', e => {
-        if (e.target.tagName === 'BUTTON') return;
-        if (overlay.classList.contains('visible')) {
-            togglePlay();
-        } else {
-            showOverlay();
-        }
-    });
-
-    let overlayTimer;
-    function showOverlay() {
-        overlay.classList.add('visible');
-        clearTimeout(overlayTimer);
-        overlayTimer = setTimeout(() => overlay.classList.remove('visible'), 3000);
-    }
-
-    // Toque duplo: mostrar overlay se estiver oculto
-    prompter.addEventListener('touchstart', () => {
-        if (!overlay.classList.contains('visible')) showOverlay();
-    }, { passive: true });
-
-    // Teclado bluetooth
-    window.addEventListener('keydown', e => {
-        if (prompter.style.display !== 'block') return;
-        if (e.code === 'Space')      { e.preventDefault(); togglePlay(); }
-        if (e.code === 'Escape')     stopPrompter();
-        if (e.code === 'ArrowUp')    changeSpeed(0.5);
-        if (e.code === 'ArrowDown')  changeSpeed(-0.5);
-    });
-
-    // Swipe vertical para ajustar velocidade
-    let touchStartY = 0;
-    prompter.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
-    prompter.addEventListener('touchmove', e => {
-        if (e.target.tagName === 'BUTTON') return;
-        const dy = touchStartY - e.touches[0].clientY;
-        if (Math.abs(dy) > 30) {
-            changeSpeed(dy > 0 ? 0.5 : -0.5);
-            touchStartY = e.touches[0].clientY;
-        }
-    }, { passive: true });
-</script>
+    </script>
 </body>
 </html>
